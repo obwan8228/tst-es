@@ -486,14 +486,16 @@ do -- Functions
         if not ESP.Targets[Type] then ESP.Targets[Type] = {} end
         if ESP.Targets[Type][Target] then return end
 
-        local TargetInfo = {
-            Objects = {},
-            CharacterObjects = {},
-            CharacterConnection = nil,
-            ToolConnection = {Added = nil, Removed = nil},
-            CurrentTool = "none",
-            LastTick = os_clock()
-        }
+local TargetInfo = {
+    Objects = {},
+    CharacterObjects = {},
+    CharacterConnection = nil,
+    ToolConnection = {Added = nil, Removed = nil},
+    CurrentTool = "none",
+    LastTick = os_clock(),
+    LastFont = nil,
+    LastFontSize = nil
+}
 
         local IsPlayer = IsA(Target, "Player")
         local IsBasePart = IsA(Target, "BasePart")
@@ -737,6 +739,29 @@ do -- Functions
 
                     return
                 end
+
+local ESPFont = Fonts.Loaded[ESPSettings.Font]
+local FontSize = ESPSettings.FontSize
+
+if ESPFont and TargetInfo.LastFont ~= ESPFont then
+    TargetInfo.LastFont = ESPFont
+
+    for _, obj in pairs(Objects) do
+        if typeof(obj) == "Instance" and obj:IsA("TextLabel") then
+            obj.FontFace = ESPFont
+        end
+    end
+end
+
+if TargetInfo.LastFontSize ~= FontSize then
+    TargetInfo.LastFontSize = FontSize
+
+    for _, obj in pairs(Objects) do
+        if typeof(obj) == "Instance" and obj:IsA("TextLabel") then
+            obj.TextSize = FontSize
+        end
+    end
+end
 
 LastTick = os_clock()
 Objects["TargetHolder"].Visible = false
